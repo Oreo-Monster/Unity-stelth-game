@@ -54,10 +54,8 @@ public class Guard : MonoBehaviour{
         //They will be going to the next waypoint
         int currentIDX = 1;
         Vector3 targetWaypoint = waypoints[currentIDX];
-        Vector3 direction = targetWaypoint - transform.position;
-        direction.Normalize();
-        //Setting the guard to face the direction of there first target
-        transform.forward = direction;
+        //Facing first target
+        transform.LookAt(targetWaypoint);
         //Loop that runs every frame
         while(true){
             //Move towards the target waypoint
@@ -69,19 +67,25 @@ public class Guard : MonoBehaviour{
                 targetWaypoint = waypoints[currentIDX];
                 //Guard will wait the wait time before moving
                 yield return new WaitForSeconds(waitTime);
-                //finding new direction
-                direction = targetWaypoint - transform.position;
-                direction.Normalize();
-                bool pointingToTarget = false;
-                //While roating to target
-                while(!pointingToTarget){
-                    //Rotating twards the target
-                    transform.forward = Vector3.RotateTowards(transform.forward, direction, rotationSpeed * Time.deltaTime, 0);
-                    //Checking if the rotation has been compleated
-                    pointingToTarget = Vector3.Cross(direction, transform.forward).magnitude < 0.01f;
-                    yield return null;
-                }
+                //Faceing next target
+                yield return StartCoroutine(turnToTarget(targetWaypoint));
             }
+            yield return null;
+        }
+    }
+
+    //Method used to turn the guard to face a target
+    IEnumerator turnToTarget(Vector3 lookTarget){
+        //Getting the direction
+        Vector3 dirToLookTarget = (lookTarget - transform.position).normalized;
+        //Finding the angle
+        float targetAngle = 90 - Mathf.Atan2(dirToLookTarget.z, dirToLookTarget.x) * Mathf.Rad2Deg;
+        //While the are farther than 0.01 degrees apart
+        while(Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetAngle)) > 0.01f){
+            //Finding how much to move the guard this frame
+            float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetAngle, rotationSpeed * Time.deltaTime);
+            //Rotating the guard the required amount
+            transform.eulerAngles = Vector3.up * angle;
             yield return null;
         }
     }    
