@@ -8,6 +8,7 @@ Baised off Intro to game dev seires by Sebastion Lague
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 /*
@@ -30,6 +31,8 @@ public class Guard : MonoBehaviour{
     public Light spotLight;
     public float veiwDistance;
     float veiwAngle;
+
+    public event Action playerSpotted;
     void Start(){
         //Filling the waypoints array with the position of the each waypoint
         waypoints = new Vector3[pathHolder.childCount];
@@ -46,6 +49,7 @@ public class Guard : MonoBehaviour{
     private void Update() {
         if (playerInSight(player)){
             spotLight.color = Color.red;
+            playerSpotted();
         }else{
             spotLight.color = Color.yellow;
         }
