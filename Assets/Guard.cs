@@ -1,6 +1,7 @@
 ﻿/*
 Emerson Wright
 August 2020
+Baised off Intro to game dev seires by Sebastion Lague
 */
 
 
@@ -23,6 +24,10 @@ public class Guard : MonoBehaviour{
     public float waitTime;
     //used to store the location of all the way points in order
     Vector3[] waypoints;
+
+    public Light spotLight;
+    public float veiwDistance;
+    float veiwAngle;
     void Start(){
         //Filling the waypoints array with the position of the each waypoint
         waypoints = new Vector3[pathHolder.childCount];
@@ -32,6 +37,8 @@ public class Guard : MonoBehaviour{
             waypoints[i] = new Vector3(waypoints[i].x, transform.position.y, waypoints[i].z);
         }
         StartCoroutine(followPath(waypoints));
+
+        veiwAngle = spotLight.spotAngle;
     }
 
     //This method is used to draw Gizmos to visulize the path in the game editor
@@ -44,6 +51,8 @@ public class Guard : MonoBehaviour{
             previousPosition = waypoint.position;
         }
         Gizmos.DrawLine(previousPosition, startPosition);
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * veiwDistance);
     }
 
     //Used to have the guard follow along the path, stop at each waypoint for a set amount of time, then turn the next waypoint and move there
@@ -88,5 +97,6 @@ public class Guard : MonoBehaviour{
             transform.eulerAngles = Vector3.up * angle;
             yield return null;
         }
+
     }    
 }
