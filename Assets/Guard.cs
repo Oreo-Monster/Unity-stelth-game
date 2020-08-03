@@ -18,6 +18,8 @@ This script controls the guard in the world, which move around a given path of e
 public class Guard : MonoBehaviour{
     //The path is a group of empty game objects which the guard will walk to in the world
     public Transform pathHolder;
+
+    public GameObject player;
     public float speed;
     public float rotationSpeed;
     //How long the guard will wait after reaching a waypoint
@@ -39,6 +41,14 @@ public class Guard : MonoBehaviour{
         StartCoroutine(followPath(waypoints));
 
         veiwAngle = spotLight.spotAngle;
+    }
+
+    private void Update() {
+        if (playerInSight(player)){
+            spotLight.color = Color.red;
+        }else{
+            spotLight.color = Color.yellow;
+        }
     }
 
     //This method is used to draw Gizmos to visulize the path in the game editor
@@ -98,5 +108,23 @@ public class Guard : MonoBehaviour{
             yield return null;
         }
 
-    }    
+    }
+
+    bool playerInSight(GameObject player){
+
+        Vector3 toPlayer = new Vector3(player.transform.position.x - transform.position.x, 0, player.transform.position.z - transform.position.z);
+        if(toPlayer.magnitude < veiwDistance){
+            if(Vector3.Angle(toPlayer, transform.forward) < veiwAngle/2){
+               Ray ray = new Ray(transform.position, toPlayer);
+               RaycastHit hitInfo;
+               if(Physics.Raycast(ray, out hitInfo)){
+                   Debug.DrawLine(ray.origin, hitInfo.point, Color.red);
+                   print("hit");
+                    return hitInfo.collider.gameObject.tag == "Player";
+               } 
+            }
+        }
+        return false;
+    }
+
 }
