@@ -41,3 +41,4 @@ public class GameUI : MonoBehaviour{
         time.text = Mathf.RoundToInt(Time.timeSinceLevelLoad).ToString();
     }
 }
+
