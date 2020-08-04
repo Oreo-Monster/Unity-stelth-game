@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
 
     Vector3 velocity;
     Rigidbody rb;
+    public bool moving = true;
 
     void Start(){
         rb = GetComponent<Rigidbody>();
@@ -46,8 +47,11 @@ public class Player : MonoBehaviour
 
     //Updating the rigid body model
     void FixedUpdate() {
-        rb.MoveRotation(Quaternion.Euler(Vector3.up * angle));
-        rb.MovePosition(rb.position + velocity * Time.deltaTime);
+        if(moving){
+            rb.MoveRotation(Quaternion.Euler(Vector3.up * angle));
+            rb.MovePosition(rb.position + velocity * Time.deltaTime);
+        }
+        
     }
 
 
